@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title class = "glyphicon glyphicon-globe">JAVA FINAL EXAMPLE - SIG IN PAGE</title>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="/Users/user/Library/Mobile Documents/com~apple~CloudDocs/ICloud Share - Nostone/Code/CodeVTI/No/Java_advance/7. Final Exam/Railway62_JavaAdvance_Hoang_Van_Chien/src/main/resources/FrontEnd/JS/jquery-3.6.4.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</head>
+
+<body class="text-center">
+
+    <style>
+      .form-signin {
+        display: inline-block;
+        text-align: center;
+        width: 50%;
+      }
+    </style>
+
+    <form class="form-signin">
+      <br>
+      <img class="mb-4" src="/Users/user/Library/Mobile Documents/com~apple~CloudDocs/ICloud Share - Nostone/Code/CodeVTI/No/Java_advance/7. Final Exam/Railway62_JavaAdvance_Hoang_Van_Chien/src/main/resources/FrontEnd/Image/logo.png" alt="" width="72" height="72">
+      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+
+      <label for="userName"></label>
+      <input type="text" class="form-control" id="userName" placeholder="User Name" required autofocus>
+
+      <br>
+
+      <label for="password" class="sr-only">Password</label>
+      <input type="password" id="password" class="form-control" placeholder="Password" required>
+
+      <br>
+
+      <button class="btn btn-lg btn-primary btn-block" id="check_login" type="button">Sign in</button>
+      <p class="mt-5 mb-3 text-muted">&copy; 2023</p>
+    </form>
+
+  <script>
+
+    $(function(){
+
+      $("#check_login").click(function(){
+
+        let userName = $("#userName").val();
+        let password = $("#password").val();
+
+        if (userName === ""){
+          alert("User Name is required")
+          return;
+        }
+
+        if (password === ""){
+          alert("Password is required")
+          return;
+        }
+
+        $.ajax({
+          type: "GET",
+          url: "http://localhost:8080/login",
+
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", "Basic " + btoa(userName + ":" + password));
+          },
+
+          success: function () {
+            console.log("Check Successfully!" );
+
+            // bộ nhớ tạm của js
+            localStorage.setItem("isLogin", "true");
+            localStorage.setItem("userName", userName);
+            localStorage.setItem("password", password);
+
+            window.location.replace("./HOME.html");
+          },
+          error: function () {
+            alert("Login Failed!");
+          }
+        });
+      });
+    });
+
+  </script>
+
+</body>
+</html>

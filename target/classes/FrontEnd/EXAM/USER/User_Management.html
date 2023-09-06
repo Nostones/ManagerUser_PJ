@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>HOME</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="/Users/user/Library/Mobile Documents/com~apple~CloudDocs/ICloud Share - Nostone/Code/CodeVTI/No/Java_advance/7. Final Exam/Railway62_JavaAdvance_Hoang_Van_Chien/src/main/resources/FrontEnd/JS/jquery-3.6.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        /* Remove the navbar's default margin-bottom and rounded borders */
+        .navbar {
+            margin-bottom: 0;
+            border-radius: 0;
+        }
+
+        /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+        .row.content {height: 100%}
+
+        /* Set gray background color and 100% height */
+        .sidenav {
+            padding-top: 20px;
+            background-color: #f1f1f1;
+            height: 100%;
+        }
+
+        /* Set black background color, white text and some padding */
+        footer {
+            background-color: #555;
+            color: white;
+            padding: 15px;
+        }
+
+        /* On small screens, set height to 'auto' for sidenav and grid */
+        @media screen and (max-width: 1024px) {
+            .sidenav {
+                height: auto;
+                padding: 15px;
+            }
+            .row.content {height:auto;}
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">VTI</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/Users/user/Library/Mobile Documents/com~apple~CloudDocs/ICloud Share - Nostone/Code/CodeVTI/No/Java_advance/7. Final Exam/Railway62_JavaAdvance_Hoang_Van_Chien/src/main/resources/FrontEnd/common/HOME/HOME.html">Home</a></li>
+                <li><a href="file:///Users/user/Library/Mobile%20Documents/com~apple~CloudDocs/ICloud%20Share%20-%20Nostone/Code/CodeVTI/No/Java_advance/7.%20Final%20Exam/Railway62_JavaAdvance_Hoang_Van_Chien/src/main/resources/FrontEnd/EXAM/USER/User_Management.html">User Management</a></li>
+                <li><a href="file:///Users/user/Library/Mobile%20Documents/com~apple~CloudDocs/ICloud%20Share%20-%20Nostone/Code/CodeVTI/No/Java_advance/7.%20Final%20Exam/Railway62_JavaAdvance_Hoang_Van_Chien/src/main/resources/FrontEnd/EXAM/GROUP/Group_Management.html">Group Management</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right" id="btn_logout">
+                <li><a href="/Users/user/Library/Mobile Documents/com~apple~CloudDocs/ICloud Share - Nostone/Code/CodeVTI/No/Java_advance/7. Final Exam/Railway62_JavaAdvance_Hoang_Van_Chien/src/main/resources/FrontEnd/common/HOME/LOGIN.html">
+                    <span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid text-center">
+    <div class="row content">
+        <div class="">
+
+            <script>
+                // GET ALL USER
+
+                var isLogin = localStorage.getItem("isLogin");
+
+                if (isLogin === "true") {
+                    var userName_login = localStorage.getItem("userName");
+                    var password_login = localStorage.getItem("password");
+
+                    console.log(userName_login);
+                    console.log(password_login);
+
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8080/user",
+
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", "Basic " + btoa( userName_login+ ":" + password_login));
+                    },
+
+                    success: function (res) {
+                        console.log("Successfully!");
+                        console.log(res);
+                        getAllAccount(res);
+                    }
+                });
+                function getAllAccount(res) {
+                    let bodyContent = ""
+                    for (let i=0; i<res.length;i++){
+                        bodyContent += "<tr>";
+
+                        if (res[i].id === null){
+                            bodyContent += "<td> </td>";
+                        } else {
+                            bodyContent += "<td class=\"text-center\">" + res[i].id + "</td>";
+                        }
+
+
+                        if (res[i].fullName === null){
+                            bodyContent += "<td> </td>";
+                        } else{
+                            bodyContent += "<td class=\"text-center\">" + res[i].fullName + "</td>";
+                        }
+
+                        if (res[i].role === null){
+                            bodyContent += "<td> </td>";
+                        } else {
+                            bodyContent += "<td class=\"text-center\">" + res[i].role + "</td>";
+                        }
+
+                        if (res[i].userName === null){
+                            bodyContent += "<td> </td>";
+                        } else {
+                            bodyContent += "<td class=\"text-center\">" + res[i].userName + "</td>";
+                        }
+
+                        if (res[i].groupId === null){
+                            bodyContent += "<td> </td>";
+                        } else {
+                            bodyContent += "<td class=\"text-center\">" + res[i].groupId + "</td>";
+                        }
+
+                        bodyContent += "<td class=\"text-center\"><a href='User_update.html?id=" + res[i].id + "' class=\"btn btn-primary\" >Update</a></td>";
+                        bodyContent += "<td class=\"text-center\"><button id='"+ res[i].id + " 'onclick='deleteUserById(this)' class=\"btn btn-outline-dark\" >Delete</button></td>";
+                        bodyContent += "</tr>";
+                    }
+                    $("#bodyaccount").append(bodyContent);
+                }
+
+                //DELETE USER BY ID
+                function deleteUserById(obj) {
+                    let id = obj.id;
+                    $.ajax({
+                        type: "DELETE",
+                        url: "http://localhost:8080/user/" + id,
+                        dataType: "JSON",
+
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("Authorization", "Basic " + btoa( userName_login+ ":" + password_login));
+                        },
+
+                        success: function (res) {
+                            console.log("Delete Successfully!");
+                            console.log(res);
+                        },
+                        error: function (error) {
+                            console.log(error.responseText);
+                            let bodyContent = "";
+                            $('#bodyaccount').empty();
+
+                            // RESET & RELOAD
+                            $.ajax({
+                                type: "GET",
+                                url: "http://localhost:8080/user",
+                                dataType: "JSON",
+
+                                beforeSend: function (xhr) {
+                                    xhr.setRequestHeader("Authorization", "Basic " + btoa( userName_login+ ":" + password_login));
+                                },
+
+                                success: function (res) {
+                                    console.log("Successfully!");
+                                    console.log(res);
+                                    getAllAccount(res);
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+
+
+                $(function () {
+                    $("#btn_logout").click(function () {
+                        localStorage.setItem("isLogin", "false");
+                        localStorage.clear();
+                        window.location.replace("/Users/user/Library/Mobile Documents/com~apple~CloudDocs/ICloud Share - Nostone/Code/CodeVTI/No/Java_advance/7. Final Exam/Railway62_JavaAdvance_Hoang_Van_Chien/src/main/resources/FrontEnd/common/HOME/LOGIN.html");
+                    });
+                });
+
+            </script>
+
+
+            <h3>List User</h3>
+            <hr>
+            <!--    Table user-->
+            <div class="container">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th class="text-center"> Id</th>
+                        <th class="text-center"> Full Name</th>
+                        <th class="text-center"> Role</th>
+                        <th class="text-center"> User Name</th>
+                        <th class="text-center"> Group Id</th>
+                        <th class="text-center">
+                            <a href='User_add.html' class="btn btn-warning" >Add New User</a>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody id="bodyaccount">
+
+                    </tbody>
+                </table>
+            </div>
+
+            <style>
+                h3 {
+                    text-align: center;
+                }
+            </style>
+
+        </div>
+
+    </div>
+</div>
+
+<footer class="container-fluid text-center">
+    <p>Java Advanced Final Exam __ Hoang Van Chien</p>
+</footer>
+
+</body>
+</html>
